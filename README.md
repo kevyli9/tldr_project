@@ -25,6 +25,7 @@ After uploading our input CSV files to our main HIT, we will release the HITs. A
 **Milestones**:
 * Release the HIT batches
 * Monitor to see if there are any issues that workers bring up
+* Collect the HIT results
 
 **Quality control** (3 points)
 We will have a number of quality control measures in place. Workers that fail to click on the attention checks will have their work rejected. Workers that spend less than 1 minute completing a HIT will also have their work rejected (reading the article itself should on average take 3-4 minutes). After filtering out these responses, we will employ the EM algorithm to the remaining responses. We will do our best to give workers incremental feedback to avoid mass rejections.  
