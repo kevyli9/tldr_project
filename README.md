@@ -4,7 +4,7 @@
 **Designing the HIT** (2 points)
 In this component, we will design the main HIT for TLDR. This HIT will display the text from an article and allow Turkers to click on sentences that they think are not necessary for the summary of the article. The sentences that are clicked on will be highlighted black.  
 **Milestones**:
-* Adapt Professor’s “shorten sentences” HIT, which allowed Turkers to remove words from sentences, to be at the sentence level rather than the word level
+* Adapt Professor Callison-Burch’s “shorten sentences” HIT, which allowed Turkers to remove words from sentences, to be at the sentence level rather than the word level
 * Test the HIT on Sandbox to see if it is functioning properly
 
 **Gather raw data** (1 point)
