@@ -1,6 +1,10 @@
 # tldr_project
 **Total points**: 17
 
+**Folders in repository**
+* Docs: holds all of the documents we need, the flowchart, mockups, and a readme
+* Src: holds the quality control and aggregation script. This is modeled as a python main method with different functions performing transformations on a pandas DataFrame. It reads in the HIT csv, and ultimately outputs a file for each article with the keep/remove votes for each sentence that workers voted on. In the end, the aggregation model will take these votes, actually remove the sentences that were labeled "remove" and then output a .txt file for each article.
+
 **Designing the HIT** (2 points)
 In this component, we will design the main HIT for TLDR. This HIT will display the text from an article and allow Turkers to click on sentences that they think are not necessary for the summary of the article. The sentences that are clicked on will be highlighted black.  
 **Milestones**:
