@@ -21,7 +21,7 @@ Relevant parts of the code and how they work:
 Improvements for the final version:
 * No major improvements needed. We may need to slightly alter the format of the aggregation output, depending on how we implement the slider UI.
 
-**Sentence Extraction** (raw data input creation)
+**Sentence Extraction** (raw data input creation)  
 Where to find it:  
 * a
 
