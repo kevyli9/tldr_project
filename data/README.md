@@ -13,10 +13,14 @@ Format of input for QC module ('sample_QC_input.csv'):
 QC module output ('sample_QC_output.csv'):
 * CSV with 3 columns: 'sentence', 'label', and 'keep_votes'
 * 'sentence' contains all of the sentences in the original text, in the same order
-* 'label' contains the label for each sentence, determined by a majority vote of qualified workers. Qualified meaning the worker 1) spent at least a minute on the HIT 2) correctly clicked/didn't click each of the quality control sentencs 3) clicked at least 5 non-quality control sentences. If most qualified workers clicked on the sentence, it was labeled 'remove' else 'keep'. Ties were broken by randomly labeling the sentence 'remove' or 'keep'. 
+* 'label' contains the label for each sentence, determined by a majority vote of qualified workers. Qualified meaning the worker 1) spent at least a minute on the HIT 2) correctly clicked/didn't click each of the quality control sentencs 3) clicked at least 5 non-quality control sentences. If most qualified workers clicked on the sentence, it was labeled 'remove' else 'keep'. 
+* Ties were broken by randomly labeling the sentence 'remove' or 'keep'. As such, given that there were only 2 qualified workers from 'sample_QC_input.csv', sentences with disagreement (1 'remove' vote and 1 'keep' vote) could either have been labeled 'remove' or 'keep'. 
 * 'keep_votes' contains the number of votes for 'keep' a sentence received
 
 Aggregation module input ('sample_QC_output.csv'):
-* Our code for the aggregation module is directly beneath the QC code; the aggregation module takes as input 
+* The aggregation module takes as input a list of tuples in the format (sentence, label, # of 'keep' votes) that is returned from the QC module (our code for the aggregation module is in the same notebook as the QC code). In this repo, we represent the list of tuples as a 3-column CSV, which is the same as 'sample_QC_output.csv'
+
+Aggregation module output ('sample_agg_output.txt'):
+* 
 
 **Code**  
