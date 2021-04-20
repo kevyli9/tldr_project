@@ -1,1 +1,8 @@
-
+**Data**  
+Format of input for QC module:  
+* Our QC module will directly take as input the HIT results CSV from MTurk (see 'sample_QC_input.csv'). We make use of the 'WorkTimeInSeconds' to confirm that the worker spent at least 1 minute on their HIT, else their vote is not counted.
+* The columns titled 'Input.pos_qual_ctrl1' and 'Input.pos_qual_ctrl2' contain our 'positive' attention check sentences (i.e. 'Please click on this sentence'). The column titled 'Input.neg_qual_ctrl' contains our 'negative' attention check sentence (i.e. 'Please do NOT click on this sentence.')
+* The columns in the 'Input.sentence_x' format represent all of the actual sentences in the text of the article.
+* The answer column names are in the 'Answer.deletion_mask_x' format for x from 1 to n+3, where n is the number of sentences in the article with the most number of sentences and 3 represents the 3 quality control sentences. MTurk sorts these columns alphabetically (meaning 'Answer.deletion_mask_10' comes before 'Answer.deletion_mask_2'). However, the order of the input columns is the correct order. For example, the **second** input column is name 'Input.pos_qual_ctrl1' which will correspond to the column  'Answer.deletion_mask_**2**'. We account for this ordering in our QC module code.
+* Answers in the answer columns take 1 of 2 formats. First, '{}' means the worker did not click on the sentence (i.e. the worker wants to keep that sentence). Second, a value that is not '{}' (typically an 11-12 digit binary number) means the worker clicked on that sentence (i.e. the worker wants to remove that sentence).
+* We do not make use of other columns in the MTurk results CSV.
