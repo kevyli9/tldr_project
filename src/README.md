@@ -23,10 +23,17 @@ Improvements for the final version:
 
 **Sentence Extraction** (raw data input creation)  
 Where to find it:  
-* a
+* The sentence extraction method is located in the src/sentence_extraction.py file.
 
 Relevant parts of the code and how they work:
-* a
+* The program loops over a list of urls and for each url does the following:
+  * Extract all the text from the article linked by the url using the newspaper API's Article methods
+  * Break down the article's text into individual sentences using the Spacy API's add_pipe and sentencizer methods (sourced from stack overflow)
+  * Store the url and sentences in a list named sentences
+  * Add the sentences list to a master list - input that stores the sentences for all the urls - by converting the sentences list into a tuple
+ * The input list is then converted into a pandas dataframe
+ * Quality control sentences are inserted into columns 2, 5, and 9
+ * The dataframe is converted into a csv
 
 Improvements for the final version:
-* a
+* The newspaper api we are using faces issues with webpages that have complicated formatting, and a potential improvement would be to find ways to enhance the api's functionality
