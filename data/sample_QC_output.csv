@@ -1,0 +1,11 @@
+sentence,label,keep_votes
+I went to the store today.,keep,2
+The sky is blue.,remove,0
+I bought apples.,keep,2
+I also bought oranges.,keep,1
+I wanted to buy eggs but forgot to.,remove,0
+I checked out after 30 minutes.,remove,0
+I put the groceries in my car.,remove,0
+There was a bird.,remove,0
+I drove home.,remove,1
+"Later, I made dinner.",remove,1
