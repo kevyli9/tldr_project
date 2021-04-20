@@ -72,8 +72,14 @@ def majority_vote(article_HITs):
         keep += 1
       else: 
         remove += 1
-    if keep >= remove:
+    if keep > remove:
       label_list.append((row[input_str], "keep", keep))
+    elif keep == remove:
+      rand_num = np.random.random()
+      if rand_num >= 0.5:
+        label_list.append((row[input_str], "keep", keep))
+      else: 
+        label_list.append((row[input_str], "remove", keep))
     else:
       label_list.append((row[input_str], "remove", keep))
   return label_list
