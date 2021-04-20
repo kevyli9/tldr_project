@@ -7,7 +7,7 @@ import pandas as pd
 
 
 
-urls = ['https://www.reuters.com/article/us-usa-fed-beigebook-idINKBN2C12NK', 'https://www.cnn.com/2021/04/14/weather/climate-change-india-monsoon-agriculture-heavy-rain/index.html', 'https://www.cnbc.com/2021/04/15/jeff-bezos-releases-final-letter-to-amazon-shareholders.html']
+urls = ['https://www.reuters.com/article/us-usa-fed-beigebook-idINKBN2C12NK', 'https://abcnews.go.com/Health/counter-covid-19-rapid-tests-major-pharmacies-week/story?id=77168639', 'https://www.nbcnews.com/news/world/steady-increase-russian-troops-crimea-ukraine-border-says-pentagon-n1264546']
 input = []
 pos_ctrl = []
 neg_ctrl = []
@@ -38,7 +38,7 @@ for url in urls:
 
 columns = ['url']   
 for i in range(1, size):
-    columns.append('Sentence' + str(i))
+    columns.append('sentence_' + str(i))
 
     
 input = pd.DataFrame(input)
