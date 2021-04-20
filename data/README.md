@@ -1,6 +1,14 @@
 **Data**  
 Raw data input ('HIT_input.csv'):
 * This input is the CSV we upload to MTurk when releasing our HIT. The file contains the individual sentences of articles.
+* Total number of columns: 3 + number of sentences in the article with the most sentences (3 attention checks + sentences in the articles)
+* Column 0: article url
+* Column 1: first sentence
+* Column 2: pos_qual_ctrl1 ('Please click on this sentence.')
+* Column 5: neg_qual_ctrl ('Please do NOT click on this sentence.')
+* Column 9: pos_qual_ctrl2 ('Please click on this sentence.')
+* Other columns: sentences in the articles with the order preserved
+* For articles that don't have the maximum number of sentences, the extra input columns are filled with an asterisk ('*')
   
 Format of input for QC module ('sample_QC_input.csv'):  
 * Our QC module will directly take as input the HIT results CSV from MTurk. We make use of the 'WorkTimeInSeconds' to confirm that the worker spent at least 1 minute on their HIT, else their vote is not counted.
