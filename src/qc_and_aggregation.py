@@ -10,6 +10,9 @@ Original file is located at
 import pandas as pd
 import numpy as np
 
+
+#QUALITY CONTROL: filter out workers and conduct a simple majority vote 
+
 # adds columns to input csv to filter workers and returns new df with new columns
 def add_filters(mturk_res):
   mturk_res = mturk_res.rename(columns={"Answer.deletion_mask_1" : "Answer.sentence_1", 
