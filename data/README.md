@@ -7,7 +7,7 @@ Raw data input ('HIT_input.csv'):
 * Column 2: pos_qual_ctrl1 ('Please click on this sentence.')
 * Column 5: neg_qual_ctrl ('Please do NOT click on this sentence.')
 * Column 9: pos_qual_ctrl2 ('Please click on this sentence.')
-* Other columns: sentences in the articles with the order preserved
+* Other columns: actual sentences in the articles with the order preserved
 * For articles that don't have the maximum number of sentences, the extra input columns are filled with an asterisk ('*')
   
 Format of input for QC module ('sample_QC_input.csv'):  
@@ -29,6 +29,4 @@ Aggregation module input ('sample_QC_output.csv'):
 * The aggregation module takes as input a list of tuples in the format (sentence, label, # of 'keep' votes) that is returned from the QC module (our code for the aggregation module is in the same notebook as the QC code). In this repo, we represent the list of tuples as a 3-column CSV, which is the same as 'sample_QC_output.csv'
 
 Aggregation module output ('sample_agg_output.txt'):
-* 
-
-**Code**  
+* This is a .txt file that contains the concatentation of the sentences labeled 'keep' in the aggregation module input. Sentences are separated by a space.  
