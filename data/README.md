@@ -26,7 +26,7 @@ QC module output ('sample_QC_output.csv'):
 * 'keep_votes' contains the number of votes for 'keep' a sentence received
 
 Aggregation module input ('sample_QC_output.csv'):
-* The aggregation module takes as input a list of tuples in the format (sentence, label, # of 'keep' votes) that is returned from the QC module (our code for the aggregation module is in the same notebook as the QC code). In this repo, we represent the list of tuples as a 3-column CSV, which is the same as 'sample_QC_output.csv'
+* The aggregation module takes as input a dataframe with the columns (sentence, label, keep_votes) that is returned from the QC module (our code for the aggregation module is in the same notebook as the QC code). In this repo, we represent the dataframe as a 3-column CSV, which is the same as 'sample_QC_output.csv'
 
 Aggregation module output ('sample_agg_output.txt'):
 * This is a .txt file that contains the concatentation of the sentences labeled 'keep' in the aggregation module input. Sentences are separated by a space.  
