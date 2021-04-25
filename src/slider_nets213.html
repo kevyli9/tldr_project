@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+</head>
+<body> 
+    
+    <div id="dvCSV"></div>
+    
+    <div class="slidecontainer">
+        <input type="file" id="fileUpload" />
+        <input type="button" id="upload" value="Upload" onclick="Upload()" />
+        <input type="range" min="1" max="100" value="100" class="slider" id="myRange">
+        <label id="demo" for='myRange'></label>
+        <input type="button" id='back' value='Back' onclick='Return()'/>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script type='text/javascript' src='script.js'></script>
+</body>
+</html>
