@@ -1,4 +1,4 @@
-**Directions for TLDR HIT**
+**Directions for TLDR HIT**  
 Hi! You can access our HIT on Sandbox here: _  
 You can find the directions for our HIT below (alternatively, you can watch this video: _ )  
 
