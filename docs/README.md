@@ -7,5 +7,6 @@ Our project is focused on summarizing news articles (hence, TLDR). For this HIT,
 * There are attention checks embedded within the text ('Please click/do NOT click on this sentence')
 * You must remove at least 5 sentences (5 not counting the attention checks)
 * Feel free to leave feedback in the textbox at the bottom  
+
 Once you submit the HIT, you're done!
 If you have any questions or if the HIT is not working properly, please contact kevyli@wharton.upenn.edu 
