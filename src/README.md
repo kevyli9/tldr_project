@@ -57,4 +57,7 @@ Relevant parts of the code and how they work:
 * The original sentences are replaced with the corresponding resolved sentences in the output csv, allowing for the final UI to display the resolved sentences in any chosen summary (see ‘coref_list’ in the majority_vote function and main method #MAJORITY VOTING)
 
 **Analysis**  
-* We will compare TLDR’s results against an existing non-crowdsourcing method, specifically “SMMRY” (https://smmry.com/about)
+* We will compare TLDR’s results against an existing non-crowdsourcing method, specifically "SMMRY" (https://smmry.com/about)
+* SMMRY uses an algorithm to summarize articles. It calculates the occurrence of each word in the text, assigns each word a number of points depending on the word's popularity, and ranks sentences by the sum of their words' points.
+* We are interested in seeing whether, on average, TLDR produces higher quality summaries than SMMRY. On the surface, SMMRY's method appears flawed: it ranks sentences with 'popular' words higher, but intuitively sentences that contain a lot of reptitive words should be removed first.
+* We will create a HIT that asks workers to vote on which summary for a given article (TLDR's summary or SMMRY's summary) is higher quality.
