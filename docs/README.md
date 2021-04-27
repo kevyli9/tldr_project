@@ -1,8 +1,5 @@
 **Directions for TLDR HIT**  
-Hi! You can access our HITs on Sandbox below (you only have to do a HIT from one of the batches):  
-* Batch 1: https://workersandbox.mturk.com/?filters[search_term]=KL&filters[min_reward]=0&page_size=20&page_number=1&sort=num_hits_desc
-* Batch 2: _
-* Batch 3: _  
+Hi! You can access our HITs on Sandbox here: https://workersandbox.mturk.com/?filters%5Bsearch_term%5D=KL&page_size=20&page_number=1&sort=num_hits_desc&filters%5Bmin_reward%5D=0     
 You can find the directions for our HIT below (alternatively, you can watch this video: https://vimeo.com/541313393)  
 
 Our project is focused on summarizing news articles (hence, TLDR). For this HIT, you will be shown the text from an article and be asked to click on sentences that can be deleted while changing the meaning of the text as little as possible. Your goal is to summarize the text by deleting sentences that are not necessary to understand the main idea of the text.
