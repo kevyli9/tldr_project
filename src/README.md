@@ -45,7 +45,7 @@ Where to find it:
 Relevant parts of the code and how they work:  
 * The HTML file (slider_nets213.html) sets up the major components of the UI, which are the upload components, slider bar, and back button
 * The CSS file (style.css) sets up the style for the slider bar
-* The JavaScript (script.js) file does a few things. First, it "gets" all of the components on the page to manipulate them. Second, it records the value of the slider bar and from that it makes the sentences with the least number of 'keep' votes disappear first. The Upload function shows each of the elements (slider bar, text, and back button), reads the uploaded file, and organizes the sentences in order of decreasing keep votes. 
+* The JavaScript (script.js) file does a few things. First, it "gets" all of the components on the page to manipulate them. Second, it records the value of the slider bar and from that it makes the sentences with the least number of 'keep' votes disappear first. The Upload function shows each of the elements (slider bar, text, and back button), reads the uploaded file, and sorts the sentences based on keep votes (sortInLeastAmountOfKeepVotes function) to be referenced when determining which sentences to hide first.
 
 **Coreference resolution**  
 Where to find it:  
