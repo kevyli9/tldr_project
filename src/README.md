@@ -59,5 +59,5 @@ Relevant parts of the code and how they work:
 **Analysis**  
 * We will compare TLDR’s results against an existing non-crowdsourcing method, specifically "SMMRY" (https://smmry.com/about)
 * SMMRY uses an algorithm to summarize articles. It calculates the occurrence of each word in the text, assigns each word a number of points depending on the word's popularity, and ranks sentences by the sum of their words' points.
-* We are interested in seeing whether, on average, TLDR produces higher quality summaries than SMMRY. On the surface, SMMRY's method appears flawed: it ranks sentences with more frequently occurring words higher, but intuitively sentences that contain a lot of words that have already been repeated should be removed first.
+* We are interested in seeing whether, on average, TLDR produces higher quality summaries than SMMRY.
 * We will create a HIT that asks workers to vote on which summary for a given article (TLDR's summary or SMMRY's summary) is higher quality, and see which summary gets more votes from workers.
