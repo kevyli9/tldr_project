@@ -37,3 +37,24 @@ Relevant parts of the code and how they work:
 
 Improvements for the final version:
 * The newspaper api we are using faces issues with webpages that have complicated formatting, and a potential improvement would be to find ways to enhance the api's functionality
+
+**Slider Bar UI**  
+Where to find it:  
+* slider_nets213.html, style.css, script.js
+
+Relevant parts of the code and how they work:  
+* The HTML file (slider_nets213.html) sets up the major components of the UI, which are the upload components, slider bar, and back button
+* The CSS file (style.css) sets up the style for the slider bar
+* The JavaScript (script.js) file does a few things. First, it "gets" all of the components on the page to manipulate them. Second, it records the value of the slider bar and from that it makes the sentences with the least number of 'keep' votes disappear first. The Upload function shows each of the elements (slider bar, text, and back button), reads the uploaded file, and organizes the sentences in order of decreasing keep votes. 
+
+**Coreference resolution**  
+Where to find it:  
+* coref_qc_and_aggregation.py
+
+Relevant parts of the code and how they work:  
+* The coreference resolution is integrated into the quality control and aggregation module (see coref_qc_and_aggregation.py).
+* The coref function retrieves the full original text and replaces coreferences with their main mention utilizing AllenNLP’s CorefPredictor Model. The function then tokenizes the resolved text into individual sentences.
+* The original sentences are replaced with the corresponding resolved sentences in the output csv, allowing for the final UI to display the resolved sentences in any chosen summary (see ‘coref_list’ in the majority_vote function and main method #MAJORITY VOTING)
+
+**Analysis**  
+* We will compare TLDR’s results against an existing non-crowdsourcing method, specifically “SMMRY” (https://smmry.com/about)
