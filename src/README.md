@@ -56,6 +56,14 @@ Relevant parts of the code and how they work:
 * The coref function retrieves the full original text and replaces coreferences with their main mention utilizing AllenNLP’s CorefPredictor Model. The function then tokenizes the resolved text into individual sentences.
 * The original sentences are replaced with the corresponding resolved sentences in the output csv, allowing for the final UI to display the resolved sentences in any chosen summary (see ‘coref_list’ in the majority_vote function and main method #MAJORITY VOTING)
 
+**Survey results**
+Where to find it:
+* a
+
+Relevant parts of the code and how they work:
+* a
+
+
 **Analysis**  
 * We will compare TLDR’s results against an existing non-crowdsourcing method, specifically "SMMRY" (https://smmry.com/about)
 * SMMRY uses an algorithm to summarize articles. It calculates the occurrence of each word in the text, assigns each word a number of points depending on the word's popularity, and ranks sentences by the sum of their words' points.
