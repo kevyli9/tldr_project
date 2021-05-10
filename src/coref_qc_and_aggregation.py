@@ -7,17 +7,24 @@ Original file is located at
     https://colab.research.google.com/drive/14c0MYGfmfEkLN5YLlGNiM-uC9jX4zbPC
 """
 
-!pip install allennlp
-!pip install allennlp_models
-!pip install -U spacy
+# !pip install allennlp
+# !pip install allennlp_models
+# !pip uninstall spacy
+!pip install spacy==2.1.0
+!pip install neuralcoref
 !python -m spacy download en_core_web_sm
 import spacy
+import neuralcoref
 from spacy.lang.en import English
 from spacy.language import Language
-from allennlp.predictors.predictor import Predictor
-import allennlp_models.coref
+import nltk.data
+nltk.download('punkt')
+# from allennlp.predictors.predictor import Predictor
+# import allennlp_models.coref
 import pandas as pd
 import numpy as np
+import datetime, time
+import matplotlib.pyplot as plt
 
 # adds columns to input csv to filter workers and returns new df with new columns
 def add_filters(mturk_res):
@@ -26,23 +33,28 @@ def add_filters(mturk_res):
       str_num = col[21:]
       num = int(str_num)
       if num < 2:
-        mturk_res = mturk_res.rename(columns={"Answer.deletion_mask_1" : "Answer.sentence_1"})
+        mturk_res = mturk_res.rename(columns={"Answer.deletion_mask_1" : "Answer.sentence_01"})
       elif num == 2:
         mturk_res = mturk_res.rename(columns={"Answer.deletion_mask_2" : "Answer.pos_qual_ctrl_1"})
       elif num > 2 and num < 5:
         original_col = 'Answer.deletion_mask_' + str_num
         num = num - 1
-        new_col = 'Answer.sentence_' + str(num)
+        new_col = 'Answer.sentence_0' + str(num)
         mturk_res = mturk_res.rename(columns={original_col : new_col})
       elif num == 5:
         mturk_res = mturk_res.rename(columns={'Answer.deletion_mask_5' : 'Answer.neg_qual_ctrl'})
       elif num > 5 and num < 9:
         original_col = 'Answer.deletion_mask_' + str_num
         num = num - 2
-        new_col = 'Answer.sentence_' + str(num)
+        new_col = 'Answer.sentence_0' + str(num)
         mturk_res = mturk_res.rename(columns={original_col : new_col})
       elif num == 9:
         mturk_res = mturk_res.rename(columns={'Answer.deletion_mask_9' : 'Answer.pos_qual_ctrl_2'})
+      elif num > 9 and num < 13:
+        original_col = 'Answer.deletion_mask_' + str_num
+        num = num - 3
+        new_col = 'Answer.sentence_0' + str(num)
+        mturk_res = mturk_res.rename(columns={original_col : new_col})
       else:
         original_col = 'Answer.deletion_mask_' + str_num
         num = num - 3
@@ -51,26 +63,169 @@ def add_filters(mturk_res):
   mturk_res['time_spent'] = mturk_res['WorkTimeInSeconds'].apply(lambda x : x >= 60)
   mturk_res['neg_qual_ctrl_correct'] = mturk_res['Answer.neg_qual_ctrl'].apply(lambda x : x == '{}')
   mturk_res['pos_qual_ctrl_correct'] = mturk_res.apply(lambda x: True
-             if  (isinstance(x['Answer.pos_qual_ctrl_1'], int)) &
-                 (isinstance(x['Answer.pos_qual_ctrl_2'], int)) 
+             if  (x['Answer.pos_qual_ctrl_1'] != '{}') and
+                 (x['Answer.pos_qual_ctrl_2'] != '{}') 
                  else False, axis = 1)
   mturk_res['num_clicks'] = 0
+  mturk_res['num_sentences'] = 0
   for index in mturk_res.index:
     count = 0
     for col in mturk_res.columns:
-      if col.startswith('Answer.sentence_'):
-        if mturk_res[col][index] != '{}' and mturk_res[col][index] != '*':
+      if col.startswith('Answer.sentence_') or col.startswith('Answer.pos_') or col.startswith('Answer.neg'):
+        if ('1' in str(mturk_res[col][index])) or ('0' in str(mturk_res[col][index])):
           count += 1
     mturk_res['num_clicks'][index] = count
+  for index in mturk_res.index:
+    total_sentences = 0
+    for col in mturk_res.columns:
+      if col.startswith('Input.sentence_'):
+        if mturk_res[col][index] != '*':
+          total_sentences += 1
+    mturk_res['num_sentences'][index] = total_sentences + 3
+  mturk_res['percent_clicked'] = mturk_res['num_clicks'] / mturk_res['num_sentences']
   mturk_res['filtered'] = mturk_res.apply(lambda x: True
                                           if (x['time_spent'] & x['neg_qual_ctrl_correct'] 
-                                              & x['pos_qual_ctrl_correct'] & (x['num_clicks'] >= 5))
+                                              & x['pos_qual_ctrl_correct'] & (x['percent_clicked'] >= 0.35))
                                           else False, axis = 1)
   return mturk_res
+
+def get_stats(mturk_res):
+  updated = add_filters(mturk_res)
+  total_workers = len(updated.index)
+
+  #positive attention checks messed up
+  pos_wrong = (~updated.pos_qual_ctrl_correct).sum()
+  percent_pos_wrong = pos_wrong / total_workers
+
+  #negative attention checks messed up
+  neg_wrong = (~updated.neg_qual_ctrl_correct).sum()
+  percent_neg_wrong = neg_wrong / total_workers
+
+  #spent less than one minute
+  under_minute = (~updated.time_spent).sum()
+  percent_under_minute = under_minute / total_workers
+
+  data = [[percent_pos_wrong, percent_neg_wrong, percent_under_minute]]
+  stats = pd.DataFrame(data, columns = ['pos_wrong', 'neg_wrong', 'under_minute'])
+  return stats
+
+# count percent of votes in majority for each worker
+def get_percent_in_majority(mturk_res):
+  filtered = get_qualified_workers(mturk_res)
+  worker_ids = filtered['WorkerId'].unique()
+  dictionary = {}
+
+  for wid in worker_ids:
+    workerHITs = filtered.loc[filtered['WorkerId'] == wid]
+    HIT_ids = workerHITs['HITId'].unique()
+    count = 0
+    total = 0
+    for hid in HIT_ids:
+      article_HITs = filtered.loc[filtered['HITId'] == hid]
+      original_text = getText(article_HITs)
+      coref_list = coref(original_text)
+      label_list_majority = majority_vote(article_HITs, coref_list)
+
+      label_list_worker = []
+      for col in workerHITs.loc[workerHITs['HITId'] == hid].columns:
+        if col.startswith('Input.sentence_'):
+          answer_str = 'Answer.sentence_' + col[15:]
+          for index, row in workerHITs.loc[workerHITs['HITId'] == hid].iterrows():
+            if row[answer_str] == '{}':
+              label_list_worker.append("keep")
+            elif pd.isna(row[answer_str]):
+              continue
+            else: 
+              label_list_worker.append("remove")
+      
+      label_list_majority = [i[1] for i in label_list_majority]
+      same = sum(x == y for x, y in zip(label_list_majority, label_list_worker))
+      count += same
+      length = len(label_list_worker)
+      total += length
+    percent = float(count/total)
+    dictionary[wid]= percent
+  return dictionary
+
+
+# convert the given date into a timestamp (in seconds)
+def format_date(date):
+    timestamp = datetime.datetime.strptime(date,"%a %b %d %H:%M:%S PDT %Y") 
+    tuple = timestamp.timetuple() 
+    return (time.mktime(tuple) / 60)
+  
+def convert_times(df, column):
+    return df[column].apply(format_date)
+
+# count time worked by each worker
+def get_work_time(mturk_res):
+  mturk_res['SubmitTime'] = convert_times(mturk_res, 'SubmitTime')
+  mturk_res['AcceptTime'] = convert_times(mturk_res, 'AcceptTime')
+  mturk_res = mturk_res.sort_values(['WorkerId', 'SubmitTime']) #sort by worker id and submit time
+  groups = mturk_res.groupby('WorkerId') #group by worker id
+  time_list = []
+  worker_list = []
+  dictionary = {}
+  for group in groups.groups: #for each worker ID
+    group_df = groups.get_group(group) #get the dataframe for that worker
+    accept = (list) (group_df['AcceptTime']) #make accept times into a list
+    submit = (list) (group_df['SubmitTime']) #make submit times into a list
+    currID = (list(set(group_df['WorkerId'])))
+    currIDString = ""
+    for item in currID:
+      currIDString += item
+    worktime = 0
+    for i in range(len(accept)): #for each time compare the submit time to the previous accept time and update work time accordingly
+      if (i == 0):
+        worktime = submit[i] - accept[i]
+      elif accept[i] < submit[i - 1]:
+        worktime += (submit[i] - submit[i - 1])
+      else:
+        worktime += (submit[i] - accept[i])
+    sentence_count = 0
+    workerHITs = mturk_res.loc[mturk_res['WorkerId'] == currIDString]
+    for col in workerHITs.columns:
+      if col.startswith('Input.sentence_'):
+        input_str = col
+        for index, row in workerHITs.iterrows():
+          if row[input_str] == '*':
+            continue
+          else: 
+            sentence_count += 1
+    dictionary[currIDString] = float(worktime*60 / sentence_count)
+  return dictionary
+
+# plot time worked vs. percent of votes in majority 
+def linear_regression(mturk_res):
+  x_arr = []
+  y_arr = []
+  filtered = get_qualified_workers(mturk_res)
+  time_worked = get_work_time(filtered)
+  percent_majority = get_percent_in_majority(mturk_res)
+
+  for worker, time in time_worked.items(): 
+    percent = percent_majority[worker]
+    x_arr.append(time)
+    y_arr.append(percent)
+  
+  x = np.array(x_arr)
+  y = np.array(y_arr)
+  plt.plot(x, y, 'o')
+  m, b = np.polyfit(x, y, 1)
+  plt.plot(x, m*x + b)
+  plt.title("Time Worked vs. Percentage Agreement with Majority")
+  plt.ylabel("Percentage Agreement with Majority")
+  plt.xlabel("Time Worked (seconds per sentence)")
+  plt.show()
+  print(m)
+  rho = np.corrcoef(x, y)
+  print(rho)
+
 
 # returns df with bad workers filtered out
 def get_qualified_workers(mturk_res):
   updated = add_filters(mturk_res)
+  # updated.to_csv('filters.csv')
   return updated[updated['filtered']]
 
 # returns list of bad workers
@@ -83,17 +238,20 @@ def get_bad_workers(mturk_res):
   return bad_workers
 
 # The coreference resolution on the original text
-def coref(original_text, predictor):
-  resolved_text = predictor.coref_resolved(document=original_text)
-  nlp = English()
-  nlp.add_pipe('sentencizer')
-  doc = nlp(resolved_text)
-  resolved_sentences = [sent.text.strip() for sent in doc.sents]
-  return resolved_sentences
+def coref(original_text):
+  nlp = spacy.load('en_core_web_sm')
+  coref = neuralcoref.NeuralCoref(nlp.vocab)
+  nlp.add_pipe(coref, name='neuralcoref')
+  doc1 = nlp(original_text)
+  coref_str = str(doc1._.coref_resolved)
+  tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+  sentences = tokenizer.tokenize(coref_str)
+  return sentences
 
 # majority vote using only good workers
 def majority_vote(article_HITs, coref_list): 
   label_list = []
+  url_list = []
   for col in article_HITs.columns:
     if col.startswith('Input.sentence_'):
       input_str = col
@@ -105,31 +263,34 @@ def majority_vote(article_HITs, coref_list):
       for index, row in article_HITs.iterrows():
         if row[answer_str] == '{}':
           keep += 1
-        elif row[answer_str] == '*':
+        elif pd.isna(row[answer_str]):
           continue
         else: 
           remove += 1
+      if (num >= len(coref_list)):
+        continue
       if keep > remove:
-        label_list.append((coref_list[num], "keep", keep))
+        label_list.append((coref_list[num].capitalize(), "keep", keep))
       elif keep == remove:
         rand_num = np.random.random()
         if rand_num >= 0.5:
-          label_list.append((coref_list[num], "keep", keep))
+          label_list.append((coref_list[num].capitalize(), "keep", keep))
         else: 
-          label_list.append((coref_list[num], "remove", keep))
+          label_list.append((coref_list[num].capitalize(), "remove", keep))
       else:
-        label_list.append((coref_list[num], "remove", keep))
+        label_list.append((coref_list[num].capitalize(), "remove", keep))
   return label_list
 
 #AGGREGATION: aggregate the majority votes and send them to a new text file!
-def vote_to_text(fileName, article_HITs):
-  f = open(fileName, "w")
+def vote_to_text(article_HITs, mturk_res, hitId):
+  url = mturk_res[mturk_res['HITId'] == hitId].iloc[0]['Input.url']
+  output = [(url, "")]
   for (index, row) in article_HITs.iterrows():
     if row['sentence'] == '*':
       continue
     elif row['label'] == 'keep':
-      f.write(row['sentence'] + " ")
-  f.close()
+      output[0] = (output[0][0], output[0][1] + " " + row['sentence'])
+  return output
 
 # Gets original text string by concat of columns 
 def getText(mturk_res):
@@ -137,36 +298,53 @@ def getText(mturk_res):
   for col in mturk_res.columns:
     if col.startswith('Input.sentence_'):
       str_num = col[15:]
-      num = int(str_num)
-      text = text + mturk_res.iloc[1][col] + " "
+      if (mturk_res.iloc[1][col] != '*'):
+        if (mturk_res.iloc[1][col].endswith('.') or mturk_res.iloc[1][col].endswith('!') or mturk_res.iloc[1][col].endswith('?')):
+          text = text + mturk_res.iloc[1][col] + " "
+        else:
+          text = text + mturk_res.iloc[1][col] + ". "
   return text
 
 def main():
     # Read in CVS result file with pandas
-    mturk_res = pd.read_csv('sample_QC_input.csv')
-    original_text = getText(mturk_res)
+    mturk_res = pd.read_csv('TLDR_results_final.csv')
 
-    # Init CoRef Model
-    predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2021.03.10.tar.gz")
+    # linear regression chart 
+    linear_regression(mturk_res)
+
+    # aggregation analysis 
+    maj_workers = get_percent_in_majority(mturk_res)
+    final_workers1 = [key for key, value in maj_workers.items() if value >= 0.80]
+    final_workers2 = [key for key, value in maj_workers.items() if value <= 0.65]
+    final_workers3 = [key for key, value in maj_workers.items()]
+    print("Percent of workers who voted in majority >= 80% of the time: ", float(len(final_workers1) / len(final_workers3)))
+    print("Percent of workers who voted in majority <= 65% of the time: ", float(len(final_workers2) / len(final_workers3)))
+
+    # get stats of bad workers
+    stats = get_stats(mturk_res)
+    stats.to_csv('stats.csv')
 
     # get list of bad workers based on updated df
     bad_workers = get_bad_workers(mturk_res)
 
     # get df with bad workers filtered out
     filtered = get_qualified_workers(mturk_res)
-
+    filtered.to_csv("filtered.csv")
     # count votes based on filtered workers
     HIT_ids = filtered['HITId'].unique()
+    output = []
     for id in HIT_ids:
       #MAJORITY VOTING
       article_HITs = filtered.loc[filtered['HITId'] == id]
-      coref_list = coref(original_text, predictor)
+      original_text = getText(article_HITs)
+      coref_list = coref(original_text)
       label_list = majority_vote(article_HITs, coref_list)
       df = pd.DataFrame(label_list, columns=['sentence', 'label', 'keep_votes'])
       csv_name = 'output_' + id + '.csv' 
       df.to_csv(csv_name, index = False)
       #AGGREGATION
-      vote_to_text(id, df) 
+      output = output + vote_to_text(df, mturk_res, id)
+    pd.DataFrame(output, columns=['url', 'summary']).to_csv("aggregation_output.csv", index = False)
       
 if __name__ == '__main__':
     main()
