@@ -8,7 +8,7 @@ import csv as csv
 
 
 
-urls = ['https://www.reuters.com/article/us-eurozone-economy-pmi-idUSKBN2BG133', 'https://www.reuters.com/article/us-usa-fed-beigebook-idINKBN2C12NK', 'https://www.reuters.com/article/us-health-coronavirus-usa-airlines-idUSKBN2BE1L3']
+urls = ['https://www.huffpost.com/entry/peloton-treadmill-recall_n_6092b2a8e4b04620270ea4a6', 'https://www.huffpost.com/entry/us-birth-rate-falls_n_60927df2e4b0c15313fa8553', 'https://www.huffpost.com/entry/pfizer-covid-vaccine-ages-2-to-11_n_609216ece4b09cce6c244432', 'https://www.nbcnews.com/business/business-news/apple-will-spend-1-billion-open-3-000-employee-campus-n1265401', 'https://www.reuters.com/article/us-australia-media-facebook-idUSKBN2AI02A', 'https://www.nbcnews.com/think/opinion/u-s-military-takes-ufos-seriously-why-doesn-t-silicon-ncna1264107', 'https://www.nbcnews.com/think/opinion/covid-vaccines-mean-end-quarantine-sight-some-view-doesn-t-ncna1262192', 'https://www.huffpost.com/entry/facebook-trump-ban-decision_n_60920bb0e4b0b9042d981570', 'https://www.huffpost.com/entry/travel-insurance-pandemic_l_6091fb92e4b02e74d22cf5f6', 'https://www.huffpost.com/entry/kamala-harris-un-prep-next-pandemic_n_6086a8bae4b02e74d21cc5ec']
 input = []
 input_paragraph = []
 pos_ctrl = []
